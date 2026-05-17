@@ -636,6 +636,14 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<TabId>("timeline");
 
   const selectedSupplements = useMemo(() => getSelectedSupplements(selection), [selection]);
+  const orderedSupplements = useMemo(
+    () =>
+      [...supplements].sort((a, b) => {
+        const selectedGap = Number(selection[b.id].selected) - Number(selection[a.id].selected);
+        return selectedGap || supplements.indexOf(a) - supplements.indexOf(b);
+      }),
+    [selection],
+  );
   const nutrientTotals = useMemo(() => estimateNutrients(selection), [selection]);
   const timeline = useMemo(() => buildTimeline(selection), [selection]);
   const warnings = useMemo(
@@ -772,7 +780,7 @@ export default function Home() {
             </div>
 
             <div className="space-y-3">
-              {supplements.map((supplement) => {
+              {orderedSupplements.map((supplement) => {
                 const state = selection[supplement.id];
                 return (
                   <div
